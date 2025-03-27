@@ -38,19 +38,25 @@ def delete(request,id):
 
 # update data here !
 
-def update(request,id):
-    user_data = get_object_or_404(User,id=id)
+def update(request, id):
+    user_data = get_object_or_404(User, id=id)
+
     if request.method == "POST":
-        User.name = request.POST["name"]
-        User.email = request.POST["email"]
-        User.age = request.POST["age"]
-        User.password = request.POST["password"]
-           
-     # Handle Profile Image (Keep the old image if none is uploaded)
-        if "profile" in request.FILES:
-            User.profile = request.FILES["profile"]
-        messages.success(request, "User updated successfully!")
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        age = request.POST.get("age")
+        profile = request.FILES.get("profile")  
         
+        user_data.name = name
+        user_data.email = email
+        user_data.password = password
+        user_data.age = age
+        
+        if profile:
+            user_data.profile = profile  
+        
+        user_data.save()
         return redirect('userInsert')
-    
-    return render(request,'update.html',context={'data':user_data})
+
+    return render(request, 'update.html', context={'data': user_data})
